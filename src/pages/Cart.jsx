@@ -52,7 +52,7 @@ export default function Cart() {
   };
 
   return (
-    <div className="flex flex-col gap-6 animate-fade-in max-w-3xl mx-auto">
+    <div className="page-stack mx-auto max-w-4xl animate-fade-in">
       <div>
         <h1 className="text-2xl font-bold text-white">سلة الطلبات</h1>
         <p className="text-slate-400 text-sm">{cartCount} عنصر في السلة</p>
@@ -76,14 +76,14 @@ export default function Cart() {
             {cartItems.map((item) => (
               <div
                 key={item.id}
-                className="glass-card p-4 flex items-center justify-between"
+                className="glass-card flex flex-col gap-4 p-4 sm:flex-row sm:items-center sm:justify-between"
               >
                 <div className="flex-1">
                   <h3 className="font-bold text-white">{item.name}</h3>
                   <p className="text-sm text-slate-400">{item.category || ''}</p>
                 </div>
 
-                <div className="flex items-center gap-3">
+                <div className="flex items-center justify-between gap-3 sm:justify-start">
                   <div className="flex items-center gap-2 bg-white/5 rounded-xl p-1">
                     <button
                       onClick={() => updateQuantity(item.id, item.quantity - 1)}
@@ -128,7 +128,7 @@ export default function Cart() {
           </div>
 
           {/* Actions */}
-          <div className="flex gap-3">
+          <div className="flex flex-col gap-3 sm:flex-row">
             <button
               onClick={handleSubmitOrder}
               disabled={submitting}
@@ -158,3 +158,7 @@ export default function Cart() {
     </div>
   );
 }
+
+
+
+

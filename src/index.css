@@ -5,7 +5,7 @@
    ======================================== */
 
 @theme {
-  --font-tajawal: 'Tajawal', sans-serif;
+  --font-tajawal: "Tajawal", sans-serif;
 
   --color-primary-50: #eef2ff;
   --color-primary-100: #e0e7ff;
@@ -58,10 +58,15 @@
 }
 
 body {
-  font-family: 'Tajawal', sans-serif;
+  font-family: "Tajawal", sans-serif;
   background-color: var(--color-dark-950);
   color: var(--color-dark-100);
   direction: rtl;
+  min-height: 100vh;
+  line-height: 1.5;
+}
+
+#root {
   min-height: 100vh;
 }
 
@@ -92,28 +97,55 @@ body {
    ======================================== */
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @keyframes slideInRight {
-  from { opacity: 0; transform: translateX(30px); }
-  to { opacity: 1; transform: translateX(0); }
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }
 
 @keyframes slideInLeft {
-  from { opacity: 0; transform: translateX(-30px); }
-  to { opacity: 1; transform: translateX(0); }
+  from {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }
 
 @keyframes pulse-glow {
-  0%, 100% { box-shadow: 0 0 5px rgba(99, 102, 241, 0.3); }
-  50% { box-shadow: 0 0 20px rgba(99, 102, 241, 0.6); }
+  0%,
+  100% {
+    box-shadow: 0 0 5px rgba(99, 102, 241, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(99, 102, 241, 0.6);
+  }
 }
 
 @keyframes shimmer {
-  0% { background-position: -200% 0; }
-  100% { background-position: 200% 0; }
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
 }
 
 .animate-fade-in {
@@ -154,6 +186,40 @@ body {
   transform: translateY(-2px);
 }
 
+.content-shell {
+  width: 100%;
+  max-width: 1440px;
+  margin: 0 auto;
+}
+
+.page-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.page-header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.surface-panel {
+  width: 100%;
+  background: rgba(15, 23, 42, 0.72);
+  border: 1px solid rgba(148, 163, 184, 0.1);
+  border-radius: 24px;
+  padding: 1rem;
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+.surface-panel-muted {
+  background: rgba(15, 23, 42, 0.46);
+  border: 1px solid rgba(148, 163, 184, 0.08);
+  border-radius: 20px;
+}
+
 /* ========================================
    Gradient Text
    ======================================== */
@@ -175,7 +241,7 @@ body {
   padding: 10px 24px;
   border-radius: 12px;
   font-weight: 600;
-  font-family: 'Tajawal', sans-serif;
+  font-family: "Tajawal", sans-serif;
   border: none;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -197,7 +263,7 @@ body {
   padding: 10px 24px;
   border-radius: 12px;
   font-weight: 500;
-  font-family: 'Tajawal', sans-serif;
+  font-family: "Tajawal", sans-serif;
   border: 1px solid rgba(148, 163, 184, 0.15);
   cursor: pointer;
   transition: all 0.3s ease;
@@ -218,7 +284,7 @@ body {
   padding: 10px 24px;
   border-radius: 12px;
   font-weight: 600;
-  font-family: 'Tajawal', sans-serif;
+  font-family: "Tajawal", sans-serif;
   border: none;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -240,7 +306,7 @@ body {
   padding: 10px 24px;
   border-radius: 12px;
   font-weight: 600;
-  font-family: 'Tajawal', sans-serif;
+  font-family: "Tajawal", sans-serif;
   border: none;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -267,10 +333,11 @@ body {
   border: 1px solid rgba(148, 163, 184, 0.15);
   border-radius: 12px;
   color: var(--color-dark-100);
-  font-family: 'Tajawal', sans-serif;
+  font-family: "Tajawal", sans-serif;
   font-size: 14px;
   transition: all 0.3s ease;
   outline: none;
+  appearance: none;
 }
 
 .input-field:focus {
@@ -290,11 +357,13 @@ body {
   overflow-x: auto;
   border-radius: 16px;
   border: 1px solid rgba(148, 163, 184, 0.08);
+  width: 100%;
 }
 
 .data-table {
   width: 100%;
   border-collapse: collapse;
+  min-width: 720px;
 }
 
 .data-table thead {
@@ -370,7 +439,11 @@ body {
    ======================================== */
 
 .stat-card {
-  background: linear-gradient(135deg, rgba(30, 41, 59, 0.7), rgba(15, 23, 42, 0.7));
+  background: linear-gradient(
+    135deg,
+    rgba(30, 41, 59, 0.7),
+    rgba(15, 23, 42, 0.7)
+  );
   border: 1px solid rgba(148, 163, 184, 0.08);
   border-radius: 20px;
   padding: 24px;
@@ -380,7 +453,7 @@ body {
 }
 
 .stat-card::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   right: 0;
@@ -410,18 +483,20 @@ body {
   justify-content: center;
   z-index: 50;
   animation: fadeIn 0.2s ease-out;
+  padding: 20px;
 }
 
 .modal-content {
   background: var(--color-dark-900);
   border: 1px solid rgba(148, 163, 184, 0.1);
   border-radius: 20px;
-  padding: 32px;
+  padding: 24px;
   width: 90%;
   max-width: 560px;
-  max-height: 85vh;
+  max-height: min(85vh, 900px);
   overflow-y: auto;
   animation: fadeIn 0.3s ease-out;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
 }
 
 /* ========================================
@@ -447,7 +522,11 @@ body {
 }
 
 .sidebar-link.active {
-  background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(99, 102, 241, 0.05));
+  background: linear-gradient(
+    135deg,
+    rgba(99, 102, 241, 0.2),
+    rgba(99, 102, 241, 0.05)
+  );
   color: var(--color-primary-400);
   border: 1px solid rgba(99, 102, 241, 0.2);
 }
@@ -474,10 +553,15 @@ body {
 }
 
 .category-card::before {
-  content: '';
+  content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.2) 60%, transparent 100%);
+  background: linear-gradient(
+    to top,
+    rgba(0, 0, 0, 0.8) 0%,
+    rgba(0, 0, 0, 0.2) 60%,
+    transparent 100%
+  );
   z-index: 1;
 }
 
@@ -523,9 +607,10 @@ body {
   background: white;
   color: #1a1a1a;
   padding: 32px;
-  border-radius: 8px;
-  font-family: 'Tajawal', sans-serif;
+  border-radius: 18px;
+  font-family: "Tajawal", sans-serif;
   direction: rtl;
+  box-shadow: inset 0 0 0 1px rgba(15, 23, 42, 0.08);
 }
 
 .receipt-header {
@@ -558,8 +643,49 @@ body {
    ======================================== */
 
 .skeleton {
-  background: linear-gradient(90deg, rgba(30, 41, 59, 0.5) 25%, rgba(51, 65, 85, 0.5) 50%, rgba(30, 41, 59, 0.5) 75%);
+  background: linear-gradient(
+    90deg,
+    rgba(30, 41, 59, 0.5) 25%,
+    rgba(51, 65, 85, 0.5) 50%,
+    rgba(30, 41, 59, 0.5) 75%
+  );
   background-size: 200% 100%;
   animation: shimmer 1.5s ease-in-out infinite;
   border-radius: 8px;
+}
+
+@media (max-width: 1023px) {
+  .glass-card:hover,
+  .stat-card:hover,
+  .category-card:hover {
+    transform: none;
+  }
+}
+
+@media (max-width: 767px) {
+  .modal-overlay {
+    align-items: flex-end;
+    padding: 12px;
+  }
+
+  .modal-content {
+    width: 100%;
+    max-width: none;
+    border-radius: 24px 24px 16px 16px;
+    padding: 18px;
+    max-height: 88vh;
+  }
+
+  .receipt {
+    padding: 18px;
+    border-radius: 14px;
+  }
+
+  .stat-card {
+    padding: 20px;
+  }
+
+  .data-table {
+    min-width: 640px;
+  }
 }

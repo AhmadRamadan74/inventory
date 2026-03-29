@@ -9,16 +9,24 @@ export function CartProvider({ children }) {
   const [cartItems, setCartItems] = useState([]);
 
   const addToCart = (product, quantity = 1) => {
+    const existing = cartItems.find((item) => item.id === product.id);
+    const requestedQuantity = existing ? existing.quantity + quantity : quantity;
+    const available = product.availableQuantity ?? product.quantity ?? 0;
+
+    if (requestedQuantity > available) {
+      toast.error(`عذراً، الكمية المطلوبة أكبر من المتوفر. المتاح: ${available}`);
+      return;
+    }
+
     setCartItems((prev) => {
-      const existing = prev.find((item) => item.id === product.id);
       if (existing) {
         return prev.map((item) =>
           item.id === product.id
-            ? { ...item, quantity: item.quantity + quantity }
+            ? { ...item, quantity: requestedQuantity }
             : item
         );
       }
-      return [...prev, { ...product, quantity }];
+      return [...prev, { ...product, quantity, availableQuantity: available }];
     });
     toast.success(`تم إضافة ${product.name} إلى السلة`);
   };
@@ -33,6 +41,13 @@ export function CartProvider({ children }) {
       removeFromCart(productId);
       return;
     }
+
+    const item = cartItems.find((i) => i.id === productId);
+    if (item && quantity > item.availableQuantity) {
+      toast.error(`عذراً، لا يمكن طلب أكثر من المتوفر. المتاح: ${item.availableQuantity}`);
+      return;
+    }
+
     setCartItems((prev) =>
       prev.map((item) =>
         item.id === productId ? { ...item, quantity } : item

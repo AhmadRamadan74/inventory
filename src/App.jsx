@@ -67,7 +67,7 @@ function PublicRoute({ children }) {
 
 function App() {
   return (
-    <BrowserRouter>
+    <BrowserRouter >
       <AuthProvider>
         <CartProvider>
           <Toaster
@@ -123,9 +123,16 @@ function App() {
               }
             >
               <Route path="/dashboard" element={<Dashboard />} />
-              <Route path="/inventory" element={<Inventory />} />
 
               {/* Admin Routes */}
+              <Route
+                path="/inventory"
+                element={
+                  <ProtectedRoute adminOnly>
+                    <Inventory />
+                  </ProtectedRoute>
+                }
+              />
               <Route
                 path="/products"
                 element={

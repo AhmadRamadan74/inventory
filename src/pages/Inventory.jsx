@@ -58,7 +58,7 @@ export default function Inventory() {
     return (
       <div className="flex flex-col gap-4">
         <div className="skeleton h-12 w-64 rounded-xl" />
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
           {[1, 2, 3].map((i) => (
             <div key={i} className="skeleton h-28 rounded-2xl" />
           ))}
@@ -69,14 +69,14 @@ export default function Inventory() {
   }
 
   return (
-    <div className="flex flex-col gap-6 animate-fade-in">
+    <div className="page-stack animate-fade-in">
       <div>
         <h1 className="text-2xl font-bold text-white">المخزون</h1>
         <p className="text-slate-400 text-sm">عرض الكميات الحالية لجميع المنتجات</p>
       </div>
 
       {/* Summary Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 gap-8 text-center md:grid-cols-3">
         <div className="stat-card">
           <p className="text-slate-400 text-sm mb-1">إجمالي العناصر</p>
           <p className="text-2xl font-bold text-white">{totalItems}</p>
@@ -113,9 +113,9 @@ export default function Inventory() {
       </div>
 
       {/* Search & Filter */}
-      <div className="flex flex-col sm:flex-row gap-3">
+      <div className="surface-panel flex flex-col gap-3 lg:flex-row">
         <div className="relative flex-1">
-          <HiOutlineSearch className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
+          <HiOutlineSearch className="absolute right-2 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
           <input
             type="text"
             value={searchQuery}
@@ -127,9 +127,9 @@ export default function Inventory() {
         <select
           value={filterCategory}
           onChange={(e) => setFilterCategory(e.target.value)}
-          className="input-field sm:w-48"
+          className="input-field w-full lg:w-56"
         >
-          <option value="all">جميع الفئات</option>
+          <option value="all" className='text-center'>جميع الفئات</option>
           {CATEGORIES.map((cat) => (
             <option key={cat.id} value={cat.id}>{cat.name}</option>
           ))}
@@ -137,7 +137,7 @@ export default function Inventory() {
       </div>
 
       {/* Inventory Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 gap-8 md:grid-cols-2 2xl:grid-cols-4"> 
         {filteredProducts.map((product) => {
           const isLow = (product.quantity || 0) <= (product.minStock || 5);
           const percentage = Math.min(
@@ -146,8 +146,8 @@ export default function Inventory() {
           );
 
           return (
-            <div key={product.id} className="glass-card p-5">
-              <div className="flex items-start justify-between mb-3">
+            <div key={product.id} className="glass-card" style={{padding:"10px 15px"}}>
+              <div className="flex items-start justify-between">
                 <div>
                   <h3 className="font-bold text-white">{product.name}</h3>
                   <span
@@ -211,3 +211,8 @@ export default function Inventory() {
     </div>
   );
 }
+
+
+
+
+

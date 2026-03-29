@@ -53,7 +53,7 @@ export default function Categories() {
   };
 
   return (
-    <div className="flex flex-col gap-6 animate-fade-in">
+    <div className="page-stack animate-fade-in">
       <div>
         <h1 className="text-2xl font-bold text-white">أقسام المنتجات</h1>
         <p className="text-slate-400 text-sm">اختر القسم لطلب المنتجات</p>
@@ -61,20 +61,20 @@ export default function Categories() {
 
       {!selectedCategory ? (
         /* Category Selection */
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3" >
           {CATEGORIES.map((cat, index) => (
             <div
               key={cat.id}
               onClick={() => handleCategoryClick(cat)}
-              className="cursor-pointer rounded-2xl overflow-hidden transition-all duration-400 hover:scale-[1.03] hover:shadow-2xl"
+              className="cursor-pointer overflow-hidden rounded-2xl text-center transition-all duration-400 hover:scale-[1.03] hover:shadow-2xl "
               style={{
                 animationDelay: `${index * 0.1}s`,
-                animation: 'fadeIn 0.5s ease-out forwards',
+                animation: 'fadeIn 0.5s ease-out forwards',  
               }}
             >
               <div
-                className="p-8 h-64 flex flex-col justify-between relative overflow-hidden"
-                style={{ background: cat.gradient }}
+                className="relative flex h-64 flex-col justify-between overflow-hidden p-6 sm:p-8"
+                style={{ background: cat.gradient, paddingTop:20 }}
               >
                 {/* Decorative elements */}
                 <div
@@ -98,10 +98,11 @@ export default function Categories() {
       ) : (
         /* Products in Category */
         <div>
-          <div className="flex items-center gap-3 mb-6">
+          <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center">
             <button
               onClick={() => setSelectedCategory(null)}
               className="btn-secondary"
+              style={{ marginBottom:20}}
             >
               ← العودة للأقسام
             </button>
@@ -109,12 +110,12 @@ export default function Categories() {
               <h2 className="text-xl font-bold text-white flex items-center gap-2">
                 {selectedCategory.emoji} {selectedCategory.name}
               </h2>
-              <p className="text-slate-400 text-sm">{products.length} منتج</p>
+              <p className="text-slate-400 text-sm" > {products.length} منتج</p>
             </div>
           </div>
 
           {loading ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 2xl:grid-cols-3">
               {[1, 2, 3].map((i) => (
                 <div key={i} className="skeleton h-40 rounded-2xl" />
               ))}
@@ -125,55 +126,59 @@ export default function Categories() {
               <p className="text-slate-400">لا توجد منتجات في هذا القسم</p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              {products.map((product) => (
-                <div key={product.id} className="glass-card p-5">
-                  <div className="flex items-start justify-between mb-3">
-                    <div>
-                      <h3 className="font-bold text-white text-lg">{product.name}</h3>
-                      {product.description && (
-                        <p className="text-slate-400 text-sm mt-1">{product.description}</p>
-                      )}
-                    </div>
-                    <div
-                      className="p-2 rounded-lg"
-                      style={{
-                        background: `${selectedCategory.color}20`,
-                        color: selectedCategory.color,
-                      }}
-                    >
-                      <HiOutlineCube size={20} />
-                    </div>
-                  </div>
+            <div className="grid grid-cols-1 gap-15 md:grid-cols-2 2xl:grid-cols-3" style={{ padding: "10px 20px" }}>
+  {products.map((product) => (
+    <div key={product.id} className="glass-card p-5 h-full flex flex-col justify-between">
+      
+      <div>
+        <div className="flex items-start justify-between mb-3">
+          <div>
+            <h3 className="font-bold text-white text-lg">{product.name}</h3>
+            {product.description && (
+              <p className="text-slate-400 text-sm mt-1">{product.description}</p>
+            )}
+          </div>
 
-                  <div className="flex items-center justify-between mb-4">
-                    <div>
-                      <span className="text-slate-400 text-xs">المتوفر</span>
-                      <p className="text-lg font-bold text-white">{product.quantity || 0}</p>
-                    </div>
-                  </div>
+          <div
+            className="p-2 rounded-lg"
+            style={{
+              background: `${selectedCategory.color}20`,
+              color: selectedCategory.color,
+            }}
+          >
+            <HiOutlineCube size={20} />
+          </div>
+        </div>
+      </div>
 
-                  <button
-                    onClick={() => addToCart(product)}
-                    disabled={(product.quantity || 0) <= 0}
-                    className="btn-primary w-full justify-center"
-                    style={{
-                      background:
-                        (product.quantity || 0) <= 0
-                          ? 'rgba(100,100,100,0.3)'
-                          : selectedCategory.gradient,
-                      cursor: (product.quantity || 0) <= 0 ? 'not-allowed' : 'pointer',
-                    }}
-                  >
-                    <HiOutlineShoppingCart size={16} />
-                    {(product.quantity || 0) <= 0 ? 'غير متوفر' : 'إضافة للسلة'}
-                  </button>
-                </div>
-              ))}
-            </div>
+      <button
+        onClick={() => addToCart(product)}
+        disabled={(product.quantity || 0) <= 0}
+        className="btn-primary w-full justify-center mt-4"
+        style={{
+          background:
+            (product.quantity || 0) <= 0
+              ? 'rgba(100,100,100,0.3)'
+              : selectedCategory.gradient,
+          cursor: (product.quantity || 0) <= 0 ? 'not-allowed' : 'pointer',
+        }}
+      >
+        <HiOutlineShoppingCart size={16} />
+        {(product.quantity || 0) <= 0 ? 'غير متوفر' : 'إضافة للسلة'}
+      </button>
+
+    </div>
+  ))}
+</div>
           )}
         </div>
       )}
     </div>
   );
 }
+
+
+
+
+
+

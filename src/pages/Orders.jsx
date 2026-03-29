@@ -127,7 +127,7 @@ export default function Orders() {
   }
 
   return (
-    <div className="flex flex-col gap-6 animate-fade-in">
+    <div className="page-stack animate-fade-in">
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-white">إدارة الطلبات</h1>
@@ -136,7 +136,7 @@ export default function Orders() {
         <select
           value={filterStatus}
           onChange={(e) => setFilterStatus(e.target.value)}
-          className="input-field w-48"
+          className="input-field w-full sm:w-56"
         >
           <option value="all">جميع الحالات</option>
           <option value="pending">قيد الانتظار</option>
@@ -272,3 +272,5 @@ export default function Orders() {
     </div>
   );
 }
+
+

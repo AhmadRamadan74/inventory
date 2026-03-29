@@ -1,20 +1,14 @@
-import { useState, useEffect, useRef } from 'react';
-import { db } from '../firebase';
-import {
-  collection,
-  getDocs,
-  addDoc,
-  doc,
-  updateDoc,
-} from 'firebase/firestore';
+import { useEffect, useRef, useState } from 'react';
+import { collection, addDoc, doc, getDocs, updateDoc } from 'firebase/firestore';
 import toast from 'react-hot-toast';
 import {
   HiOutlineDocumentText,
-  HiOutlinePlus,
-  HiOutlineX,
-  HiOutlinePrinter,
   HiOutlineEye,
+  HiOutlinePlus,
+  HiOutlinePrinter,
+  HiOutlineX,
 } from 'react-icons/hi';
+import { db } from '../firebase';
 
 export default function Receipts() {
   const [receipts, setReceipts] = useState([]);
@@ -40,6 +34,7 @@ export default function Receipts() {
         getDocs(collection(db, 'receipts')),
         getDocs(collection(db, 'orders')),
       ]);
+
       setReceipts(
         receiptsSnap.docs
           .map((d) => ({ id: d.id, ...d.data() }))
@@ -49,20 +44,23 @@ export default function Receipts() {
             return dateB.localeCompare(dateA);
           })
       );
+
       setOrders(
         ordersSnap.docs
           .map((d) => ({ id: d.id, ...d.data() }))
-          .filter((o) => o.status === 'approved')
+          .filter((order) => order.status === 'approved')
       );
     } catch (error) {
       console.error('Error fetching data:', error);
     }
+
     setLoading(false);
   };
 
   const handleOrderSelect = (orderId) => {
     setSelectedOrderId(orderId);
-    const order = orders.find((o) => o.id === orderId);
+    const order = orders.find((item) => item.id === orderId);
+
     if (order) {
       setFormData({
         engineerName: order.engineerName || '',
@@ -72,10 +70,11 @@ export default function Receipts() {
     }
   };
 
-  const handleCreateReceipt = async (e) => {
-    e.preventDefault();
+  const handleCreateReceipt = async (event) => {
+    event.preventDefault();
+
     if (!selectedOrderId || formData.items.length === 0) {
-      toast.error('يرجى اختيار طلب');
+      toast.error('Please select an approved order');
       return;
     }
 
@@ -90,29 +89,28 @@ export default function Receipts() {
       };
 
       await addDoc(collection(db, 'receipts'), receiptData);
-
-      // Update order status to completed
       await updateDoc(doc(db, 'orders', selectedOrderId), {
         status: 'completed',
       });
 
-      toast.success('تم إنشاء الفاتورة بنجاح');
+      toast.success('Receipt created successfully');
       setShowModal(false);
       setSelectedOrderId('');
       setFormData({ engineerName: '', items: [], notes: '' });
       fetchData();
     } catch (error) {
       console.error('Error creating receipt:', error);
-      toast.error('حدث خطأ في إنشاء الفاتورة');
+      toast.error('Failed to create receipt');
     }
   };
 
   const handlePrint = () => {
     const printWindow = window.open('', '_blank');
+
     printWindow.document.write(`
       <html dir="rtl">
         <head>
-          <title>فاتورة</title>
+          <title>Receipt</title>
           <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
           <style>
             body { font-family: 'Tajawal', sans-serif; direction: rtl; padding: 20px; }
@@ -120,12 +118,9 @@ export default function Receipts() {
             .header { text-align: center; border-bottom: 2px dashed #ccc; padding-bottom: 16px; margin-bottom: 16px; }
             .header h1 { margin: 0; font-size: 24px; }
             .header p { color: #666; margin: 4px 0; }
-            .info { margin-bottom: 16px; }
-            .info p { margin: 4px 0; }
             table { width: 100%; border-collapse: collapse; margin: 16px 0; }
             th, td { padding: 10px; text-align: right; border-bottom: 1px solid #eee; }
             th { background: #f5f5f5; font-weight: 700; }
-            .footer { text-align: center; margin-top: 24px; padding-top: 16px; border-top: 2px dashed #ccc; color: #666; }
           </style>
         </head>
         <body>
@@ -138,6 +133,7 @@ export default function Receipts() {
 
   const formatDate = (dateStr) => {
     if (!dateStr) return '-';
+
     return new Date(dateStr).toLocaleDateString('ar-SA', {
       year: 'numeric',
       month: 'long',
@@ -155,16 +151,14 @@ export default function Receipts() {
   }
 
   return (
-    <div className="flex flex-col gap-6 animate-fade-in">
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-        <div>
+    <div className="page-stack animate-fade-in">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="page-header">
           <h1 className="text-2xl font-bold text-white">الفواتير</h1>
-          <p className="text-slate-400 text-sm">{receipts.length} فاتورة</p>
+          <p className="text-sm text-slate-400">{receipts.length} فاتورة</p>
         </div>
-        <button
-          onClick={() => setShowModal(true)}
-          className="btn-primary"
-        >
+
+        <button onClick={() => setShowModal(true)} className="btn-primary justify-center">
           <HiOutlinePlus size={18} />
           إنشاء فاتورة
         </button>
@@ -172,8 +166,8 @@ export default function Receipts() {
 
       {receipts.length === 0 ? (
         <div className="glass-card p-12 text-center">
-          <HiOutlineDocumentText className="mx-auto text-slate-600 mb-4" size={48} />
-          <p className="text-slate-400 text-lg">لا توجد فواتير</p>
+          <HiOutlineDocumentText className="mx-auto mb-4 text-slate-600" size={48} />
+          <p className="text-lg text-slate-400">لا توجد فواتير</p>
         </div>
       ) : (
         <div className="table-container glass-card">
@@ -182,25 +176,23 @@ export default function Receipts() {
               <tr>
                 <th>رقم الفاتورة</th>
                 <th>المهندس</th>
-                <th>المنتجات</th>
+                <th>عدد الاصناف</th>
                 <th>التاريخ</th>
-                <th>الإجراءات</th>
+                <th>الاجراءات</th>
               </tr>
             </thead>
             <tbody>
               {receipts.map((receipt) => (
                 <tr key={receipt.id}>
-                  <td className="font-medium text-indigo-400">
-                    {receipt.receiptNumber}
-                  </td>
+                  <td className="font-medium text-indigo-400">{receipt.receiptNumber}</td>
                   <td className="text-white">{receipt.engineerName}</td>
-                  <td>{receipt.items?.length || 0} منتج</td>
+                  <td>{receipt.items?.length || 0} item(s)</td>
                   <td className="text-slate-400">{formatDate(receipt.createdAt)}</td>
                   <td>
                     <button
                       onClick={() => setShowReceipt(receipt)}
-                      className="p-2 rounded-lg hover:bg-indigo-500/10 text-indigo-400 transition-colors"
-                      title="عرض"
+                      className="rounded-lg p-2 text-indigo-400 transition-colors hover:bg-indigo-500/10"
+                      title="View"
                     >
                       <HiOutlineEye size={16} />
                     </button>
@@ -212,15 +204,14 @@ export default function Receipts() {
         </div>
       )}
 
-      {/* Create Receipt Modal */}
       {showModal && (
         <div className="modal-overlay" onClick={() => setShowModal(false)}>
-          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-            <div className="flex items-center justify-between mb-6">
+          <div className="modal-content" onClick={(event) => event.stopPropagation()}>
+            <div className="mb-6 flex items-center justify-between">
               <h2 className="text-xl font-bold text-white">إنشاء فاتورة</h2>
               <button
                 onClick={() => setShowModal(false)}
-                className="p-2 rounded-lg hover:bg-white/5 text-slate-400"
+                className="rounded-lg p-2 text-slate-400 hover:bg-white/5"
               >
                 <HiOutlineX size={20} />
               </button>
@@ -228,36 +219,36 @@ export default function Receipts() {
 
             <form onSubmit={handleCreateReceipt} className="flex flex-col gap-4">
               <div>
-                <label className="block text-sm font-medium text-slate-300 mb-2">
-                  اختر الطلب (الموافق عليه)
+                <label className="mb-4 block text-sm font-medium text-slate-300" style={{padding:5, marginTop:10}}>
+                  اختر طلب معتمد
                 </label>
                 <select
                   value={selectedOrderId}
-                  onChange={(e) => handleOrderSelect(e.target.value)}
+                  onChange={(event) => handleOrderSelect(event.target.value)}
                   className="input-field"
                 >
-                  <option value="">اختر طلب</option>
+                  <option value="">اختر طلب معتمد</option>
                   {orders.map((order) => (
                     <option key={order.id} value={order.id}>
-                      {order.engineerName} - {order.items?.length || 0} منتج
+                      {order.engineerName} - {order.items?.length || 0} item(s)
                     </option>
                   ))}
                 </select>
               </div>
 
               {formData.items.length > 0 && (
-                <div>
-                  <label className="block text-sm font-medium text-slate-300 mb-2">
-                    المنتجات
+                <div className="surface-panel surface-panel-muted p-4">
+                  <label className="mb-3 block text-sm font-medium text-slate-300">
+                    اصناف الفاتورة
                   </label>
                   <div className="flex flex-col gap-2">
-                    {formData.items.map((item, i) => (
+                    {formData.items.map((item, index) => (
                       <div
-                        key={i}
-                        className="flex items-center justify-between p-3 rounded-xl bg-white/[0.03]"
+                        key={index}
+                        className="flex items-center justify-between rounded-xl border border-white/8 bg-white/[0.04] p-3"
                       >
-                        <span className="text-white text-sm">{item.productName}</span>
-                        <span className="badge badge-info">الكمية: {item.quantity}</span>
+                        <span className="text-sm text-white">{item.productName}</span>
+                        <span className="badge badge-info">Qty: {item.quantity}</span>
                       </div>
                     ))}
                   </div>
@@ -265,28 +256,26 @@ export default function Receipts() {
               )}
 
               <div>
-                <label className="block text-sm font-medium text-slate-300 mb-2">
-                  ملاحظات
-                </label>
+                <label className="mb-2 block text-sm font-medium text-slate-300" style={{marginBottom:5}}>ملاحظات</label>
                 <textarea
                   value={formData.notes}
-                  onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
+                  onChange={(event) => setFormData({ ...formData, notes: event.target.value })}
                   className="input-field resize-none"
-                  rows="2"
+                  rows="3"
                   placeholder="ملاحظات اختيارية"
                 />
               </div>
 
-              <div className="flex gap-3 mt-2">
+              <div className="mt-2 flex flex-col-reverse gap-3 sm:flex-row">
                 <button type="submit" className="btn-primary flex-1 justify-center">
-                  إنشاء الفاتورة
+                  إنشاء فاتورة
                 </button>
                 <button
                   type="button"
                   onClick={() => setShowModal(false)}
-                  className="btn-secondary"
+                  className="btn-secondary justify-center"
                 >
-                  إلغاء
+                  الغاء
                 </button>
               </div>
             </form>
@@ -294,41 +283,37 @@ export default function Receipts() {
         </div>
       )}
 
-      {/* View Receipt Modal */}
       {showReceipt && (
         <div className="modal-overlay" onClick={() => setShowReceipt(null)}>
-          <div
-            className="modal-content max-w-lg"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xl font-bold text-white">فاتورة</h2>
+          <div className="modal-content max-w-lg" onClick={(event) => event.stopPropagation()}>
+            <div className="mb-4 flex items-center justify-between">
+              <h2 className="text-xl font-bold text-white">Receipt</h2>
               <div className="flex items-center gap-2">
                 <button
                   onClick={handlePrint}
-                  className="p-2 rounded-lg hover:bg-indigo-500/10 text-indigo-400"
-                  title="طباعة"
+                  className="rounded-lg p-2 text-indigo-400 hover:bg-indigo-500/10"
+                  title="Print"
                 >
                   <HiOutlinePrinter size={20} />
                 </button>
                 <button
                   onClick={() => setShowReceipt(null)}
-                  className="p-2 rounded-lg hover:bg-white/5 text-slate-400"
+                  className="rounded-lg p-2 text-slate-400 hover:bg-white/5"
                 >
                   <HiOutlineX size={20} />
                 </button>
               </div>
             </div>
 
-            <div ref={receiptRef} className="receipt">
-              <div className="receipt-header">
-                <h1 style={{ fontSize: '22px', fontWeight: '700' }}>فاتورة صرف مواد</h1>
+            <div ref={receiptRef} className="receipt absolute translate-x-10 translate-y-10 left-20 right-50">
+              <div className="receipt-header" >
+                <h1 style={{ fontSize: '22px', fontWeight: '700' }}>فاتورة صرف</h1>
                 <p style={{ color: '#666', marginTop: '4px' }}>نظام إدارة المخزون</p>
                 <p style={{ fontSize: '14px', color: '#999', marginTop: '8px' }}>
                   رقم الفاتورة: {showReceipt.receiptNumber}
                 </p>
                 <p style={{ fontSize: '14px', color: '#999' }}>
-                  التاريخ: {formatDate(showReceipt.createdAt)}
+                  Date: {formatDate(showReceipt.createdAt)}
                 </p>
               </div>
 
@@ -347,9 +332,9 @@ export default function Receipts() {
                   </tr>
                 </thead>
                 <tbody>
-                  {showReceipt.items?.map((item, i) => (
-                    <tr key={i}>
-                      <td>{i + 1}</td>
+                  {showReceipt.items?.map((item, index) => (
+                    <tr key={index}>
+                      <td>{index + 1}</td>
                       <td>{item.productName}</td>
                       <td>{item.quantity}</td>
                     </tr>
@@ -373,7 +358,7 @@ export default function Receipts() {
                   fontSize: '12px',
                 }}
               >
-                <p>شكراً لكم</p>
+                <p>Thank you</p>
               </div>
             </div>
           </div>

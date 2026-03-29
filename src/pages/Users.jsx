@@ -36,7 +36,7 @@ export default function Users() {
   }
 
   return (
-    <div className="flex flex-col gap-6 animate-fade-in">
+    <div className="page-stack animate-fade-in" style={{padding:30}}>
       <div>
         <h1 className="text-2xl font-bold text-white">المستخدمين</h1>
         <p className="text-slate-400 text-sm">{users.length} مستخدم مسجل</p>
@@ -48,9 +48,9 @@ export default function Users() {
           <p className="text-slate-400 text-lg">لا يوجد مستخدمين</p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+        <div className="grid grid-cols-1 gap-5 md:grid-cols-2 2xl:grid-cols-3">
           {users.map((user) => (
-            <div key={user.id} className="glass-card p-6 md:p-8">
+            <div key={user.id} className="glass-card p-6 md:p-8" style={{padding:"10px 15px"}}>
               <div className="flex items-center gap-5 mb-6">
                 <div
                   className="w-14 h-14 rounded-full flex shrink-0 items-center justify-center text-white text-xl font-bold"
@@ -77,7 +77,7 @@ export default function Users() {
               {user.phone && (
                 <div className="flex items-center justify-between text-sm mt-2">
                   <span className="text-slate-400">الهاتف:</span>
-                  <span className="text-slate-200">{user.phone}</span>
+                  <span className="text-slate-200" style={{paddingTop:10}}>{user.phone}</span>
                 </div>
               )}
             </div>
@@ -87,3 +87,5 @@ export default function Users() {
     </div>
   );
 }
+
+

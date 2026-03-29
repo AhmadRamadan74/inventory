@@ -112,11 +112,11 @@ export default function Purchases() {
   }
 
   return (
-    <div className="flex flex-col gap-6 animate-fade-in">
+    <div className="page-stack animate-fade-in">
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-white">إدارة المشتريات</h1>
-          <p className="text-slate-400 text-sm">{purchases.length} عملية شراء</p>
+          <h1 className="text-2xl font-bold text-white" style={{padding:"80px 20px"}}>إدارة المشتريات</h1>
+          <p className="text-slate-400 text-sm absolute right-5" style={{marginBottom:"5px"}}>{purchases.length} عملية شراء</p>
         </div>
         <button
           onClick={() => setShowModal(true)}
@@ -196,7 +196,7 @@ export default function Purchases() {
                 </select>
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <div>
                   <label className="block text-sm font-medium text-slate-300 mb-2">
                     الكمية *
@@ -269,14 +269,14 @@ export default function Purchases() {
                 />
               </div>
 
-              <div className="flex gap-3 mt-2">
+              <div className="mt-2 flex flex-col-reverse gap-3 sm:flex-row">
                 <button type="submit" className="btn-primary flex-1 justify-center">
                   تسجيل المشتريات
                 </button>
                 <button
                   type="button"
                   onClick={() => setShowModal(false)}
-                  className="btn-secondary"
+                  className="btn-secondary justify-center"
                 >
                   إلغاء
                 </button>
@@ -288,3 +288,7 @@ export default function Purchases() {
     </div>
   );
 }
+
+
+
+

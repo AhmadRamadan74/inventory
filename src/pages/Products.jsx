@@ -153,12 +153,12 @@ export default function Products() {
   }
 
   return (
-    <div className="flex flex-col gap-6 animate-fade-in">
+    <div className="page-stack animate-fade-in">
       {/* Header */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-white">إدارة المنتجات</h1>
-          <p className="text-slate-400 text-sm">{products.length} منتج في المخزون</p>
+          <h1 className="text-2xl font-bold text-white" style={{padding:"10px 20px"}}>إدارة المنتجات</h1>
+          <p className="text-slate-400 text-sm absolute right-5" style={{marginBottom:"5px"}}>{products.length} منتج في المخزون</p>
         </div>
         <button
           onClick={() => {
@@ -175,7 +175,7 @@ export default function Products() {
       </div>
 
       {/* Search & Filter */}
-      <div className="flex flex-col sm:flex-row gap-3">
+      <div className="surface-panel flex flex-col gap-3 lg:flex-row">
         <div className="relative flex-1">
           <HiOutlineSearch className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
           <input
@@ -190,7 +190,7 @@ export default function Products() {
         <select
           value={filterCategory}
           onChange={(e) => setFilterCategory(e.target.value)}
-          className="input-field sm:w-48"
+          className="input-field w-full lg:w-56"
           id="filter-category"
         >
           <option value="all">جميع الفئات</option>
@@ -320,7 +320,7 @@ export default function Products() {
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <div>
                   <label className="block text-sm font-medium text-slate-300 mb-2">
                     الكمية *
@@ -352,7 +352,7 @@ export default function Products() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <div>
                   <label className="block text-sm font-medium text-slate-300 mb-2">
                     الفئة
@@ -398,14 +398,14 @@ export default function Products() {
                 />
               </div>
 
-              <div className="flex gap-3 mt-2">
+              <div className="mt-2 flex flex-col-reverse gap-3 sm:flex-row">
                 <button type="submit" className="btn-primary flex-1 justify-center">
                   {editProduct ? 'حفظ التعديلات' : 'إضافة المنتج'}
                 </button>
                 <button
                   type="button"
                   onClick={() => setShowModal(false)}
-                  className="btn-secondary"
+                  className="btn-secondary justify-center"
                 >
                   إلغاء
                 </button>
@@ -417,3 +417,9 @@ export default function Products() {
     </div>
   );
 }
+
+
+
+
+
+

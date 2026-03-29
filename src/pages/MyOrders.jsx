@@ -5,7 +5,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { HiOutlineClipboardList, HiOutlineEye, HiOutlineX } from 'react-icons/hi';
 
 export default function MyOrders() {
-  const { user } = useAuth();
+  const { user, userData } = useAuth();
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedOrder, setSelectedOrder] = useState(null);
@@ -20,7 +20,13 @@ export default function MyOrders() {
       const snap = await getDocs(collection(db, 'orders'));
       const myOrders = snap.docs
         .map((d) => ({ id: d.id, ...d.data() }))
-        .filter((o) => o.engineerId === user.uid)
+        .filter(
+          (o) =>
+            o.engineerId === user.uid ||
+            o.userId === user.uid ||
+            (o.engineerName && o.engineerName === user.email) ||
+            (userData?.name && o.engineerName === userData.name)
+        )
         .sort((a, b) => {
           const dateA = a.createdAt?.toDate
             ? a.createdAt.toDate()
@@ -74,7 +80,7 @@ export default function MyOrders() {
   }
 
   return (
-    <div className="flex flex-col gap-6 animate-fade-in">
+    <div className="page-stack animate-fade-in">
       <div>
         <h1 className="text-2xl font-bold text-white">طلباتي</h1>
         <p className="text-slate-400 text-sm">{orders.length} طلب</p>
@@ -94,7 +100,7 @@ export default function MyOrders() {
               className="glass-card p-5 cursor-pointer"
               onClick={() => setSelectedOrder(order)}
             >
-              <div className="flex items-center justify-between mb-3">
+              <div className="mb-3 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                 <div className="flex items-center gap-3">
                   <div className="p-2 rounded-lg bg-indigo-500/10 text-indigo-400">
                     <HiOutlineClipboardList size={20} />
@@ -111,7 +117,7 @@ export default function MyOrders() {
                 {getStatusBadge(order.status)}
               </div>
 
-              <div className="flex items-center gap-4 text-sm text-slate-400">
+              <div className="flex flex-wrap items-center gap-3 text-sm text-slate-400">
                 <span>{order.items?.length || 0} منتج</span>
                 {order.note && <span>• {order.note}</span>}
               </div>
@@ -191,3 +197,6 @@ export default function MyOrders() {
     </div>
   );
 }
+
+
+
