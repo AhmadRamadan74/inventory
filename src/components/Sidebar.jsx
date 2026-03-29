@@ -253,7 +253,7 @@ export default function Sidebar({ isOpen, onClose }) {
 
           <button
             onClick={handleLogout}
-            className="flex items-center gap-3 w-full px-4 py-3 rounded-xl text-sm font-semibold text-red-400/90 transition-all cursor-pointer hover:bg-red-500/10"
+            className="flex items-center gap-3 w-full px-4 py-3 rounded-xl text-sm font-semibold text-red-400/90 transition-all cursor-pointer"
           >
             <HiOutlineLogout size={20} style={{marginTop:20}} />
             <span style={{fontSize:15, marginTop:20}}>تسجيل الخروج</span>

@@ -205,9 +205,9 @@ export default function Receipts() {
       )}
 
       {showModal && (
-        <div className="modal-overlay" onClick={() => setShowModal(false)}>
-          <div className="modal-content" onClick={(event) => event.stopPropagation()}>
-            <div className="mb-6 flex items-center justify-between">
+        <div className="modal-overlay"  style={{padding: 100, marginTop: 100}} onClick={() => setShowModal(false)}>
+          <div className="modal-content"  onClick={(event) => event.stopPropagation()}>
+            <div className="mb-6 flex items-center justify-between" >
               <h2 className="text-xl font-bold text-white">إنشاء فاتورة</h2>
               <button
                 onClick={() => setShowModal(false)}
@@ -285,9 +285,9 @@ export default function Receipts() {
 
       {showReceipt && (
         <div className="modal-overlay" onClick={() => setShowReceipt(null)}>
-          <div className="modal-content max-w-lg" onClick={(event) => event.stopPropagation()}>
+          <div className="modal-content max-w-lg" style={{marginBottom:400}} onClick={(event) => event.stopPropagation()}>
             <div className="mb-4 flex items-center justify-between">
-              <h2 className="text-xl font-bold text-white">Receipt</h2>
+              <h2 className="text-xl font-bold text-white">فاتورة صرف</h2>
               <div className="flex items-center gap-2">
                 <button
                   onClick={handlePrint}
