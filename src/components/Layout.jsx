@@ -13,33 +13,73 @@ export default function Layout() {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen bg-dark-950 lg:flex lg:min-h-dvh lg:items-start lg:gap-6 lg:p-4 xl:p-6">
+    <div style={{ minHeight: '100vh', background: 'var(--bg-base)', transition: 'background 0.3s ease' }}
+      className="lg:flex lg:min-h-dvh lg:items-start lg:gap-5 lg:p-4 xl:p-6"
+    >
       <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
 
-      <div className="flex min-h-screen min-w-0 flex-1 flex-col lg:min-h-[calc(100dvh-2rem)]">
-        <header className="sticky top-0 z-30 flex items-center justify-between border-b border-white/8 bg-slate-950/90 px-4 py-3 backdrop-blur-xl lg:hidden">
+      <div style={{ display: 'flex', flexDirection: 'column', flex: 1, minWidth: 0, minHeight: '100vh' }}
+        className="lg:min-h-[calc(100dvh-2rem)]"
+      >
+        {/* Mobile header */}
+        <header style={{
+          position: 'sticky', top: 0, zIndex: 30,
+          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+          padding: '10px 16px',
+          background: 'var(--bg-surface)',
+          borderBottom: '1px solid var(--border-color)',
+          backdropFilter: 'blur(12px)',
+        }} className="lg:hidden">
           <button
             onClick={() => setSidebarOpen(true)}
-            className="rounded-lg p-2 text-slate-400 transition-colors hover:bg-white/5 hover:text-white"
+            style={{
+              padding: 8, borderRadius: 10, border: 'none',
+              background: 'var(--bg-surface-2)',
+              color: 'var(--text-secondary)',
+              cursor: 'pointer',
+            }}
           >
-            <HiOutlineMenu size={24} />
+            <HiOutlineMenu size={22} />
           </button>
 
-          <h1 className="text-lg font-bold gradient-text">المخزون</h1>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <div style={{
+              width: 28, height: 28, background: 'linear-gradient(135deg,#C9A84C,#9d7d2e)',
+              borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center',
+            }}>
+              <svg width="16" height="16" viewBox="0 0 26 26" fill="none">
+                <rect x="10" y="7" width="6" height="14" rx="0.8" fill="white"/>
+                <rect x="4" y="11" width="5" height="10" rx="0.8" fill="white" opacity="0.85"/>
+                <rect x="17" y="10" width="5" height="11" rx="0.8" fill="white" opacity="0.85"/>
+                <polygon points="13,2 9,7 17,7" fill="white"/>
+              </svg>
+            </div>
+            <span style={{ color: 'var(--gold-primary)', fontWeight: 800, fontSize: 15 }}>سعود العقارية</span>
+          </div>
 
-          {!isAdmin && (
+          {!isAdmin ? (
             <button
               onClick={() => navigate("/cart")}
-              className="relative rounded-lg p-2 text-slate-400 transition-colors hover:bg-white/5 hover:text-white"
+              style={{
+                padding: 8, borderRadius: 10, border: 'none',
+                background: 'var(--bg-surface-2)',
+                color: 'var(--text-secondary)',
+                cursor: 'pointer',
+                position: 'relative',
+              }}
             >
-              <HiOutlineShoppingCart size={24} />
+              <HiOutlineShoppingCart size={22} />
               {cartCount > 0 && <span className="cart-badge">{cartCount}</span>}
             </button>
+          ) : (
+            <div style={{ width: 40 }} />
           )}
-          {isAdmin && <div className="w-10" />}
         </header>
 
-        <main className="flex-1 px-4 pb-6 pt-5 sm:px-5 sm:pb-8 sm:pt-6 lg:px-0 lg:pb-0 lg:pt-0">
+        {/* Main content */}
+        <main style={{ flex: 1, padding: '20px 16px 28px' }}
+          className="sm:px-5 sm:pb-8 sm:pt-6 lg:px-0 lg:pb-0 lg:pt-0"
+        >
           <div className="content-shell w-full lg:pt-4 xl:pt-6">
             <Outlet />
           </div>

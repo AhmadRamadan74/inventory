@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { CartProvider } from './contexts/CartContext';
+import { ThemeProvider } from './contexts/ThemeContext';
 
 // Pages
 import Login from './pages/Login';
@@ -26,10 +27,16 @@ function ProtectedRoute({ children, adminOnly = false }) {
 
   if (loading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-dark-950">
-        <div className="flex flex-col items-center gap-4">
-          <div className="w-12 h-12 border-4 border-indigo-500/30 border-t-indigo-500 rounded-full animate-spin" />
-          <p className="text-slate-400 text-sm font-tajawal">جاري التحميل...</p>
+      <div style={{ display:'flex', minHeight:'100vh', alignItems:'center', justifyContent:'center', background:'var(--bg-base)' }}>
+        <div style={{ display:'flex', flexDirection:'column', alignItems:'center', gap:'16px' }}>
+          <div style={{
+            width: '48px', height: '48px',
+            border: '3px solid rgba(201,168,76,0.2)',
+            borderTop: '3px solid #C9A84C',
+            borderRadius: '50%',
+            animation: 'spin 0.8s linear infinite',
+          }} />
+          <p style={{ color: 'var(--text-muted)', fontSize: '14px', fontFamily: 'Tajawal, sans-serif' }}>جاري التحميل...</p>
         </div>
       </div>
     );
@@ -52,8 +59,14 @@ function PublicRoute({ children }) {
 
   if (loading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-dark-950">
-        <div className="w-12 h-12 border-4 border-indigo-500/30 border-t-indigo-500 rounded-full animate-spin" />
+      <div style={{ display:'flex', minHeight:'100vh', alignItems:'center', justifyContent:'center', background:'var(--bg-base)' }}>
+        <div style={{
+          width: '44px', height: '44px',
+          border: '3px solid rgba(201,168,76,0.2)',
+          borderTop: '3px solid #C9A84C',
+          borderRadius: '50%',
+          animation: 'spin 0.8s linear infinite',
+        }} />
       </div>
     );
   }
@@ -68,118 +81,59 @@ function PublicRoute({ children }) {
 function App() {
   return (
     <BrowserRouter>
-      <AuthProvider>
-        <CartProvider>
-          <Toaster
-            position="top-center"
-            toastOptions={{
-              className:
-                '!rounded-2xl !border !border-white/10 !bg-slate-800 !text-slate-100 !font-tajawal !shadow-xl !backdrop-blur-md [direction:rtl]',
-              success: {
-                iconTheme: {
-                  primary: '#22c55e',
-                  secondary: '#1e293b',
+      <ThemeProvider>
+        <AuthProvider>
+          <CartProvider>
+            <Toaster
+              position="top-center"
+              toastOptions={{
+                style: {
+                  fontFamily: 'Tajawal, sans-serif',
+                  direction: 'rtl',
+                  borderRadius: '14px',
+                  border: '1px solid rgba(201,168,76,0.3)',
+                  background: 'var(--bg-surface)',
+                  color: 'var(--text-primary)',
+                  boxShadow: '0 8px 30px rgba(0,0,0,0.12)',
                 },
-              },
-              error: {
-                iconTheme: {
-                  primary: '#ef4444',
-                  secondary: '#1e293b',
+                success: {
+                  iconTheme: { primary: '#22c55e', secondary: 'white' },
                 },
-              },
-            }}
-          />
-
-          <Routes>
-            {/* Public Routes */}
-            <Route
-              path="/login"
-              element={
-                <PublicRoute>
-                  <Login />
-                </PublicRoute>
-              }
-            />
-            <Route
-              path="/register"
-              element={
-                <PublicRoute>
-                  <Register />
-                </PublicRoute>
-              }
+                error: {
+                  iconTheme: { primary: '#ef4444', secondary: 'white' },
+                },
+              }}
             />
 
-            {/* Protected Routes */}
-            <Route
-              element={
-                <ProtectedRoute>
-                  <Layout />
-                </ProtectedRoute>
-              }
-            >
-              <Route path="/dashboard" element={<Dashboard />} />
+            <Routes>
+              {/* Public Routes */}
+              <Route path="/login" element={<PublicRoute><Login /></PublicRoute>} />
+              <Route path="/register" element={<PublicRoute><Register /></PublicRoute>} />
 
-              {/* Admin Routes */}
-              <Route
-                path="/inventory"
-                element={
-                  <ProtectedRoute adminOnly>
-                    <Inventory />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/products"
-                element={
-                  <ProtectedRoute adminOnly>
-                    <Products />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/purchases"
-                element={
-                  <ProtectedRoute adminOnly>
-                    <Purchases />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/orders"
-                element={
-                  <ProtectedRoute adminOnly>
-                    <Orders />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/receipts"
-                element={
-                  <ProtectedRoute adminOnly>
-                    <Receipts />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/users"
-                element={
-                  <ProtectedRoute adminOnly>
-                    <Users />
-                  </ProtectedRoute>
-                }
-              />
+              {/* Protected Routes */}
+              <Route element={<ProtectedRoute><Layout /></ProtectedRoute>}>
+                <Route path="/dashboard" element={<Dashboard />} />
 
-              {/* Engineer Routes */}
-              <Route path="/categories" element={<Categories />} />
-              <Route path="/cart" element={<Cart />} />
-              <Route path="/my-orders" element={<MyOrders />} />
-            </Route>
+                {/* Admin Routes */}
+                <Route path="/inventory" element={<ProtectedRoute adminOnly><Inventory /></ProtectedRoute>} />
+                <Route path="/products"  element={<ProtectedRoute adminOnly><Products /></ProtectedRoute>} />
+                <Route path="/purchases" element={<ProtectedRoute adminOnly><Purchases /></ProtectedRoute>} />
+                <Route path="/orders"    element={<ProtectedRoute adminOnly><Orders /></ProtectedRoute>} />
+                <Route path="/receipts"  element={<ProtectedRoute adminOnly><Receipts /></ProtectedRoute>} />
+                <Route path="/users"     element={<ProtectedRoute adminOnly><Users /></ProtectedRoute>} />
 
-            {/* Default redirect */}
-            <Route path="*" element={<Navigate to="/login" replace />} />
-          </Routes>
-        </CartProvider>
-      </AuthProvider>
+                {/* Engineer Routes */}
+                <Route path="/categories" element={<Categories />} />
+                <Route path="/cart"       element={<Cart />} />
+                <Route path="/my-orders"  element={<MyOrders />} />
+              </Route>
+
+              {/* Default redirect */}
+              <Route path="*" element={<Navigate to="/login" replace />} />
+            </Routes>
+          </CartProvider>
+        </AuthProvider>
+      </ThemeProvider>
     </BrowserRouter>
   );
 }

@@ -2,6 +2,7 @@ import { NavLink, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useAuth } from "../contexts/AuthContext";
 import { useCart } from "../contexts/CartContext";
+import { useTheme } from "../contexts/ThemeContext";
 import { collection, query, where, onSnapshot } from "firebase/firestore";
 import { db } from "../firebase";
 import toast from "react-hot-toast";
@@ -13,68 +14,82 @@ import {
   HiOutlineDocumentText,
   HiOutlineLogout,
   HiOutlineUserGroup,
-  HiOutlineChartBar,
+  HiOutlineSun,
+  HiOutlineMoon,
 } from "react-icons/hi";
 import { HiOutlineArchiveBox } from "react-icons/hi2";
 
+function SaudLogo({ size = 36, color = '#C9A84C' }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 110 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+      {/* Building 1 – tallest, leftmost */}
+      <polygon points="6,78 6,28 13,14 20,28 20,78" fill={color} />
+      {/* Building 2 */}
+      <polygon points="23,78 23,34 30,20 37,34 37,78" fill={color} />
+      {/* Building 3 – center */}
+      <polygon points="40,78 40,40 47,26 54,40 54,78" fill={color} />
+      {/* Building 4 */}
+      <polygon points="57,78 57,46 63,34 69,46 69,78" fill={color} />
+      {/* Arch element – و shape */}
+      <path
+        d="M72,78 L72,56 Q72,44 80,42 Q88,40 88,52 Q88,62 80,65 L76,67 L76,78 Z"
+        fill={color}
+      />
+      {/* د element – angular/step */}
+      <path
+        d="M91,78 L91,62 L100,55 L104,60 L96,66 L96,78 Z"
+        fill={color}
+      />
+      {/* Base line */}
+      <rect x="5" y="78" width="100" height="4" rx="2" fill={color} />
+    </svg>
+  );
+}
+
 export default function Sidebar({ isOpen, onClose }) {
   const { user, userData, logout, isAdmin } = useAuth();
-  const { cartCount } = useCart();
-  const navigate = useNavigate();
+  const { cartCount }                       = useCart();
+  const { theme, toggleTheme }             = useTheme();
+  const navigate                            = useNavigate();
   const [pendingOrdersCount, setPendingOrdersCount] = useState(0);
 
   useEffect(() => {
     if (!isAdmin) return;
-
     let isFirstLoad = true;
     const q = query(collection(db, "orders"), where("status", "==", "pending"));
     const unsubscribe = onSnapshot(q, (snapshot) => {
       setPendingOrdersCount(snapshot.docs.length);
-
       if (!isFirstLoad) {
-        const hasNew = snapshot.docChanges().some((change) => change.type === "added");
+        const hasNew = snapshot.docChanges().some((c) => c.type === "added");
         if (hasNew) {
           toast("يوجد طلب جديد بانتظار موافقتك!", {
             icon: "🔔",
-            className: "!bg-indigo-600 !text-white !border-indigo-400/40",
+            style: { background: "#C9A84C", color: "#fff", fontFamily: "Tajawal" },
           });
         }
       }
       isFirstLoad = false;
     });
-
     return () => unsubscribe();
   }, [isAdmin]);
 
-  // Observer for Engineer: Notify when their order is approved or rejected
   useEffect(() => {
-    // Wait until `user` is available
     if (isAdmin || !user?.uid) return;
-
     let isFirstLoad = true;
-    const q = query(
-      collection(db, "orders"),
-      where("engineerId", "==", user.uid)
-    );
-
+    const q = query(collection(db, "orders"), where("engineerId", "==", user.uid));
     const unsubscribe = onSnapshot(q, (snapshot) => {
       if (!isFirstLoad) {
         snapshot.docChanges().forEach((change) => {
           if (change.type === "modified") {
             const data = change.doc.data();
-            const orderNum = change.doc.id.slice(-6).toUpperCase();
-            
-            if (data.status === "approved") {
-              toast.success(`تمت الموافقة على طلبك رقم #${orderNum} 🎉`);
-            } else if (data.status === "rejected") {
-              toast.error(`تم رفض طلبك رقم #${orderNum} ❌`);
-            }
+            const num = change.doc.id.slice(-6).toUpperCase();
+            if (data.status === "approved") toast.success(`تمت الموافقة على طلبك رقم #${num} 🎉`);
+            else if (data.status === "rejected") toast.error(`تم رفض طلبك رقم #${num} ❌`);
           }
         });
       }
       isFirstLoad = false;
     });
-
     return () => unsubscribe();
   }, [isAdmin, user]);
 
@@ -84,139 +99,179 @@ export default function Sidebar({ isOpen, onClose }) {
   };
 
   const adminLinks = [
-    {
-      to: "/dashboard",
-      icon: <HiOutlineHome size={21} />,
-      label: "لوحة التحكم",
-    },
-    { to: "/products", icon: <HiOutlineCube size={21} />, label: "المنتجات" },
-    {
-      to: "/purchases",
-      icon: <HiOutlineShoppingCart size={21} />,
-      label: "المشتريات",
-    },
-    {
-      to: "/inventory",
-      icon: <HiOutlineArchiveBox size={21} />,
-      label: "المخزون",
-    },
-    {
-      to: "/orders",
-      icon: <HiOutlineClipboardList size={21} />,
-      label: "الطلبات",
-    },
-    {
-      to: "/receipts",
-      icon: <HiOutlineDocumentText size={21} />,
-      label: "الفواتير",
-    },
-    {
-      to: "/users",
-      icon: <HiOutlineUserGroup size={21} />,
-      label: "المستخدمين",
-    },
+    { to: "/dashboard", icon: <HiOutlineHome size={20} />,          label: "لوحة التحكم" },
+    { to: "/products",  icon: <HiOutlineCube size={20} />,           label: "المنتجات" },
+    { to: "/purchases", icon: <HiOutlineShoppingCart size={20} />,   label: "المشتريات" },
+    { to: "/inventory", icon: <HiOutlineArchiveBox size={20} />,     label: "المخزون" },
+    { to: "/orders",    icon: <HiOutlineClipboardList size={20} />,  label: "الطلبات" },
+    { to: "/receipts",  icon: <HiOutlineDocumentText size={20} />,   label: "الفواتير" },
+    { to: "/users",     icon: <HiOutlineUserGroup size={20} />,      label: "المستخدمين" },
   ];
 
   const engineerLinks = [
-    { to: "/dashboard", icon: <HiOutlineHome size={21} />, label: "الرئيسية" },
-    { to: "/categories", icon: <HiOutlineCube size={21} />, label: "الأقسام" },
-    {
-      to: "/cart",
-      icon: <HiOutlineShoppingCart size={21} />,
-      label: "السلة",
-    },
-    {
-      to: "/my-orders",
-      icon: <HiOutlineClipboardList size={21} />,
-      label: "طلباتي",
-    },
+    { to: "/dashboard",  icon: <HiOutlineHome size={20} />,         label: "الرئيسية" },
+    { to: "/categories", icon: <HiOutlineCube size={20} />,          label: "الأقسام" },
+    { to: "/cart",       icon: <HiOutlineShoppingCart size={20} />,  label: "السلة" },
+    { to: "/my-orders",  icon: <HiOutlineClipboardList size={20} />, label: "طلباتي" },
   ];
 
   const links = isAdmin ? adminLinks : engineerLinks;
-  const userAvatarClass = isAdmin
-    ? "bg-[linear-gradient(135deg,#6366f1,#4f46e5)]"
-    : "bg-[linear-gradient(135deg,#22c55e,#16a34a)]";
+
+  // Logo color: always gold. On light bg it's slightly darker for contrast.
+  const logoColor = theme === 'light' ? '#9d7d2e' : '#C9A84C';
 
   return (
     <>
       {/* Mobile overlay */}
       {isOpen && (
         <div
-          className="fixed inset-0 z-[60] bg-black/60 backdrop-blur-sm lg:hidden"
+          className="fixed inset-0 z-[60] bg-black/30 backdrop-blur-sm lg:hidden"
           onClick={onClose}
         />
       )}
 
       <aside
-        className={`fixed inset-y-0 right-0 z-[70] flex h-dvh w-[calc(100vw-1rem)] max-w-[250px] flex-col border-l border-indigo-500/12 bg-[linear-gradient(180deg,#0f172a_0%,#0c1324_50%,#080e1c_100%)] p-2 transition-transform duration-300 ease-in-out lg:sticky lg:top-4 lg:h-[calc(100dvh-2rem)] lg:rounded-[28px]
-          ${isOpen ? "translate-x-0" : "translate-x-full lg:translate-x-0"}
-        `}
+        style={{
+          background: "var(--sidebar-bg)",
+          borderLeft: "1px solid var(--sidebar-border)",
+          transition: "transform 0.3s ease, background 0.3s ease",
+        }}
+        className={`fixed inset-y-0 right-0 z-[70] flex h-dvh w-[calc(100vw-1rem)] max-w-[255px] flex-col p-2 lg:sticky lg:top-4 lg:h-[calc(100dvh-2rem)] lg:rounded-[26px]
+          ${isOpen ? "translate-x-0" : "translate-x-full lg:translate-x-0"}`}
       >
-        {/* Logo */}
-        <div className="px-7 py-8 border-b border-indigo-500/10">
-          <div className="flex items-center gap-4">
-            <div className="mb-1 mr-1 flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-[linear-gradient(135deg,#6366f1,#4f46e5)] shadow-[0_6px_20px_rgba(99,102,241,0.35)]">
-              <HiOutlineChartBar size={26} className="text-white" />
+        {/* ── Logo ── */}
+        <div style={{ borderBottom: "1px solid var(--sidebar-border)", padding: "20px 18px 18px" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+            {/* Logo mark */}
+            <div style={{
+              width: 48, height: 48,
+              borderRadius: 14,
+              background: theme === 'light'
+                ? 'rgba(201,168,76,0.10)'
+                : 'rgba(201,168,76,0.12)',
+              border: '1.5px solid rgba(201,168,76,0.22)',
+              display: "flex", alignItems: "center", justifyContent: "center",
+              flexShrink: 0,
+              boxShadow: '0 2px 10px rgba(201,168,76,0.15)',
+            }}>
+              <SaudLogo size={32} color={logoColor} />
             </div>
-            <div className="overflow-hidden">
-              <h1 className="text-xl font-bold text-white truncate">المخزون</h1>
-              <p className="text-xs text-slate-500 mt-1 truncate">
+
+            <div style={{ overflow: "hidden", flex: 1 }}>
+              <h1 style={{ color: "var(--text-primary)", fontWeight: 800, fontSize: 17, lineHeight: 1.2 }}>
+                سعود العقارية
+              </h1>
+              <p style={{ color: "var(--text-muted)", fontSize: 11, marginTop: 2 }}>
                 نظام إدارة المخزون
               </p>
             </div>
+
+            {/* Theme toggle */}
+            <button
+              onClick={toggleTheme}
+              className="theme-toggle"
+              title={theme === "light" ? "الوضع الداكن" : "الوضع الفاتح"}
+            >
+              {theme === "light"
+                ? <HiOutlineMoon size={17} />
+                : <HiOutlineSun size={17} />}
+            </button>
           </div>
         </div>
 
-        {/* Navigation */}
-        <div className="mt-2 flex-1 overflow-y-auto px-5 py-6">
-          <p className="mb-5 px-2 text-base font-bold tracking-widest text-slate-600">
+        {/* ── Navigation ── */}
+        <div style={{ flex: 1, overflowY: "auto", padding: "16px 12px" }}>
+          <p style={{
+            color: "var(--text-placeholder)",
+            fontSize: 10,
+            fontWeight: 700,
+            letterSpacing: "1.5px",
+            textTransform: "uppercase",
+            marginBottom: 10,
+            paddingRight: 6,
+          }}>
             القائمة الرئيسية
           </p>
 
-          <nav className="flex flex-col gap-2">
+          <nav style={{ display: "flex", flexDirection: "column", gap: 4 }}>
             {links.map((link) => (
               <NavLink
                 key={link.to}
                 to={link.to}
                 onClick={onClose}
                 className={({ isActive }) =>
-                  `group relative flex items-center gap-4 rounded-2xl border-2 px-4 py-3 text-sm font-semibold transition-all duration-200 ${
-                    isActive
-                      ? "border-indigo-500/25 bg-indigo-500/15 text-indigo-100 shadow-[0_8px_30px_rgba(79,70,229,0.12)]"
-                      : "border-transparent text-slate-400 hover:border-white/8 hover:bg-white/[0.04] hover:text-white"
+                  `group relative flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-semibold transition-all duration-200 ${
+                    isActive ? "sidebar-link active" : "sidebar-link"
                   }`
                 }
               >
-                  <span className="shrink-0 text-xl">{link.icon}</span>
-                  <span className="text-[15px] whitespace-nowrap">
-                    {link.label}
+                <span style={{ flexShrink: 0 }}>{link.icon}</span>
+                <span style={{ fontSize: 14, whiteSpace: "nowrap" }}>{link.label}</span>
+
+                {link.to === "/cart" && cartCount > 0 && (
+                  <span style={{
+                    marginRight: "auto",
+                    background: "linear-gradient(135deg,#C9A84C,#9d7d2e)",
+                    color: "white",
+                    borderRadius: 99,
+                    padding: "2px 10px",
+                    fontSize: 12,
+                    fontWeight: 800,
+                  }}>
+                    {cartCount}
                   </span>
-                  {link.to === "/cart" && cartCount > 0 && (
-                    <span className="rounded-full bg-indigo-700/35 px-3 py-1 text-lg font-bold text-white">
-                      {cartCount}
-                    </span>
-                  )}
-                  {isAdmin && link.to === "/orders" && pendingOrdersCount > 0 && (
-                    <span className="mr-auto rounded-full bg-red-500 px-3 py-1 text-xs font-bold text-white shadow-[0_0_10px_rgba(239,68,68,0.5)]">
-                      {pendingOrdersCount}
-                    </span>
-                  )}
+                )}
+                {isAdmin && link.to === "/orders" && pendingOrdersCount > 0 && (
+                  <span style={{
+                    marginRight: "auto",
+                    background: "#ef4444",
+                    color: "white",
+                    borderRadius: 99,
+                    padding: "2px 9px",
+                    fontSize: 11,
+                    fontWeight: 800,
+                    boxShadow: "0 0 8px rgba(239,68,68,0.5)",
+                  }}>
+                    {pendingOrdersCount}
+                  </span>
+                )}
               </NavLink>
             ))}
           </nav>
         </div>
 
-        {/* User Profile Section */}
-        <div className="border-t border-indigo-500/10 px-5 py-6 pb-5">
-          <div className="flex items-center gap-3 p-4 rounded-2xl mb-4 bg-slate-800/40 border border-slate-700/30">
-            <div className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-xl text-white font-bold ${userAvatarClass}`}>
+        {/* ── User Profile ── */}
+        <div style={{ borderTop: "1px solid var(--sidebar-border)", padding: "14px 12px 12px" }}>
+          <div style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 10,
+            padding: "12px 14px",
+            borderRadius: 14,
+            background: "var(--bg-surface-2)",
+            border: "1px solid var(--border-color)",
+            marginBottom: 10,
+          }}>
+            <div style={{
+              width: 40, height: 40,
+              borderRadius: 12,
+              background: isAdmin
+                ? "linear-gradient(135deg,#C9A84C,#9d7d2e)"
+                : "linear-gradient(135deg,#22c55e,#16a34a)",
+              display: "flex", alignItems: "center", justifyContent: "center",
+              color: "white", fontWeight: 800, fontSize: 16,
+              flexShrink: 0,
+            }}>
               {userData?.name?.charAt(0)?.toUpperCase() || "U"}
             </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-semibold text-white truncate">
+            <div style={{ flex: 1, overflow: "hidden" }}>
+              <p style={{
+                color: "var(--text-primary)", fontWeight: 700, fontSize: 14,
+                overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
+              }}>
                 {userData?.name || "مستخدم"}
               </p>
-              <p className="text-xs text-slate-500 mt-0.5 truncate">
+              <p style={{ color: "var(--text-muted)", fontSize: 11, marginTop: 2 }}>
                 {isAdmin ? "مدير النظام" : "مهندس"}
               </p>
             </div>
@@ -224,10 +279,27 @@ export default function Sidebar({ isOpen, onClose }) {
 
           <button
             onClick={handleLogout}
-            className="flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm font-semibold text-red-400/90 transition-all hover:bg-red-500/8 hover:text-red-300"
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 10,
+              width: "100%",
+              padding: "10px 14px",
+              borderRadius: 12,
+              border: "none",
+              background: "transparent",
+              color: "#ef4444",
+              fontFamily: "Tajawal, sans-serif",
+              fontSize: 14,
+              fontWeight: 600,
+              cursor: "pointer",
+              transition: "all 0.2s ease",
+            }}
+            onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(239,68,68,0.08)")}
+            onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
           >
-            <HiOutlineLogout size={20} />
-            <span className="text-[15px]">تسجيل الخروج</span>
+            <HiOutlineLogout size={18} />
+            <span>تسجيل الخروج</span>
           </button>
         </div>
       </aside>

@@ -112,29 +112,29 @@ export default function Inventory() {
   return (
     <div className="page-stack animate-fade-in">
       <div className="page-header">
-        <h1 className="text-2xl font-bold text-white">المخزون</h1>
-        <p className="text-sm text-slate-400">
+        <h1 style={{ color: 'var(--text-primary)', fontSize: 24, fontWeight: 800 }}>المخزون</h1>
+        <p style={{ color: 'var(--text-muted)', fontSize: 13 }}>
           عرض الكميات الحالية لجميع المنتجات
         </p>
       </div>
 
       <div className="grid grid-cols-1 gap-5 text-center md:grid-cols-3">
         <div className="stat-card">
-          <p className="mb-1 text-sm text-slate-400">إجمالي العناصر</p>
-          <p className="text-2xl font-bold text-white">{totalItems}</p>
-          <div className="absolute right-0 top-0 h-20 w-20 rounded-full bg-[radial-gradient(circle,rgba(99,102,241,0.15)_0%,transparent_70%)] blur-xl" />
+          <p style={{ color: 'var(--text-muted)', fontSize: 13, marginBottom: 4 }}>إجمالي العناصر</p>
+          <p style={{ color: 'var(--text-primary)', fontSize: 28, fontWeight: 800 }}>{totalItems}</p>
+          <div className="absolute right-0 top-0 h-20 w-20 rounded-full blur-xl" style={{ background: 'radial-gradient(circle,rgba(201,168,76,0.15) 0%,transparent 70%)' }} />
         </div>
         <div className="stat-card">
-          <p className="mb-1 text-sm text-slate-400">القيمة الإجمالية</p>
-          <p className="text-2xl font-bold text-white">
-            {totalValue.toFixed(2)} ر.س
+          <p style={{ color: 'var(--text-muted)', fontSize: 13, marginBottom: 4 }}>قيمة المخزون (تكلفة)</p>
+          <p style={{ color: 'var(--gold-primary)', fontSize: 22, fontWeight: 800 }}>
+            {totalValue.toLocaleString()} ر.س
           </p>
-          <div className="absolute right-0 top-0 h-20 w-20 rounded-full bg-[radial-gradient(circle,rgba(14,165,233,0.15)_0%,transparent_70%)] blur-xl" />
+          <div className="absolute right-0 top-0 h-20 w-20 rounded-full blur-xl" style={{ background: 'radial-gradient(circle,rgba(201,168,76,0.12) 0%,transparent 70%)' }} />
         </div>
         <div className="stat-card">
-          <p className="mb-1 text-sm text-slate-400">منخفض المخزون</p>
-          <p className="text-2xl font-bold text-amber-400">{lowStockCount}</p>
-          <div className="absolute right-0 top-0 h-20 w-20 rounded-full bg-[radial-gradient(circle,rgba(245,158,11,0.15)_0%,transparent_70%)] blur-xl" />
+          <p style={{ color: 'var(--text-muted)', fontSize: 13, marginBottom: 4 }}>منخفض المخزون</p>
+          <p style={{ color: '#b45309', fontSize: 28, fontWeight: 800 }}>{lowStockCount}</p>
+          <div className="absolute right-0 top-0 h-20 w-20 rounded-full blur-xl" style={{ background: 'radial-gradient(circle,rgba(245,158,11,0.15) 0%,transparent 70%)' }} />
         </div>
       </div>
 
@@ -176,53 +176,48 @@ export default function Inventory() {
             100,
           );
           const category = getCategoryMeta(product.category);
-          const progressClass = isLow
-            ? "bg-[linear-gradient(90deg,#ef4444,#f59e0b)]"
-            : "bg-[linear-gradient(90deg,#6366f1,#0ea5e9)]";
+          const progressBg = isLow
+            ? "linear-gradient(90deg,#ef4444,#f59e0b)"
+            : "linear-gradient(90deg,#C9A84C,#9d7d2e)";
 
           return (
-            <div key={product.id} className="glass-card p-4 sm:p-5">
-              <div className="flex items-start justify-between gap-3">
+            <div key={product.id} className="glass-card" style={{ padding: '18px 20px' }}>
+              <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 10 }}>
                 <div>
-                  <h3 className="font-bold text-white">{product.name}</h3>
-                  <span className={`text-xs ${category.textClass}`}>
-                    {category.name}
-                  </span>
+                  <h3 style={{ color: 'var(--text-primary)', fontWeight: 700, fontSize: 15 }}>{product.name}</h3>
+                  <span style={{ color: 'var(--gold-primary)', fontSize: 12 }}>{category.name}</span>
                 </div>
-                {isLow && (
-                  <HiOutlineExclamationCircle
-                    className="shrink-0 text-amber-400"
-                    size={20}
-                  />
-                )}
+                {isLow && <HiOutlineExclamationCircle style={{ color: '#b45309', flexShrink: 0 }} size={20} />}
               </div>
 
-              <div className="mb-3">
-                <div className="mb-1 flex items-end justify-between gap-3">
-                  <span className="text-3xl font-bold text-white">
+              <div style={{ margin: '14px 0 10px' }}>
+                <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', marginBottom: 6 }}>
+                  <span style={{ color: 'var(--text-primary)', fontSize: 30, fontWeight: 800 }}>
                     {product.quantity || 0}
                   </span>
-                  <span className="text-xs text-slate-500">
-                    حد أدنى: {product.minStock || 5}
-                  </span>
+                  <span style={{ color: 'var(--text-muted)', fontSize: 12 }}>حد أدنى: {product.minStock || 5}</span>
                 </div>
-                <div className="h-2 w-full overflow-hidden rounded-full bg-dark-800">
+                <div style={{ height: 8, width: '100%', borderRadius: 99, background: 'var(--bg-surface-2)', overflow: 'hidden' }}>
                   <div
-                    className={`h-full rounded-full transition-all duration-500 ${getProgressWidthClass(percentage)} ${progressClass}`}
+                    className={getProgressWidthClass(percentage)}
+                    style={{ height: '100%', borderRadius: 99, background: progressBg, transition: 'all 0.5s ease' }}
                   />
                 </div>
               </div>
 
-              <div className="flex items-center justify-between text-sm">
-                <span className="text-slate-400">سعر الشراء</span>
-                <span className="text-slate-200">
-                  {product.purchasePrice || 0} ر.س
-                </span>
+              {/* Both prices — admin only page */}
+              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 13, marginBottom: 4 }}>
+                <span style={{ color: 'var(--text-muted)' }}>سعر الشراء (الصين)</span>
+                <span style={{ color: 'var(--text-secondary)', fontWeight: 600 }}>{(product.purchasePrice || 0).toLocaleString()} ر.س</span>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 13 }}>
+                <span style={{ color: 'var(--text-muted)' }}>سعر البيع (المهندسين)</span>
+                <span style={{ color: 'var(--gold-primary)', fontWeight: 700 }}>{(product.salePrice || 0).toLocaleString()} ر.س</span>
               </div>
 
               {isLow && (
-                <div className="mt-3 rounded-lg border border-amber-500/20 bg-amber-500/10 p-2">
-                  <p className="flex items-center gap-1 text-xs text-amber-400">
+                <div style={{ marginTop: 12, borderRadius: 10, border: '1px solid rgba(245,158,11,0.2)', background: 'rgba(245,158,11,0.08)', padding: '8px 12px' }}>
+                  <p style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, color: '#b45309' }}>
                     <HiOutlineExclamationCircle size={14} />
                     المخزون منخفض - يرجى إعادة التوريد
                   </p>
@@ -235,8 +230,8 @@ export default function Inventory() {
 
       {filteredProducts.length === 0 && (
         <div className="glass-card p-12 text-center">
-          <HiOutlineArchiveBox className="mx-auto mb-4 text-slate-600" size={48} />
-          <p className="text-slate-400">لا توجد منتجات مطابقة</p>
+          <HiOutlineArchiveBox size={48} style={{ color: 'var(--text-muted)', margin: '0 auto 12px' }} />
+          <p style={{ color: 'var(--text-muted)' }}>لا توجد منتجات مطابقة</p>
         </div>
       )}
     </div>
