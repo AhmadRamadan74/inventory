@@ -344,7 +344,7 @@ export default function Products() {
       {/* Modal */}
       {showModal && (
         <div className="modal-overlay" onClick={() => setShowModal(false)}>
-          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+          <div className="modal-content mt-55" onClick={(e) => e.stopPropagation()}>
             <div className="mb-6 flex items-center justify-between">
               <h2 style={{ color: "var(--text-primary)", fontWeight: 800, fontSize: 20 }}>
                 {editProduct ? "تعديل المنتج" : "إضافة منتج جديد"}
