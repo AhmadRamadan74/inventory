@@ -33,21 +33,27 @@ export default function Dashboard() {
 
     async function loadDashboardData() {
       try {
-        const productsSnap  = await getDocs(collection(db, "products"));
-        const purchasesSnap = await getDocs(collection(db, "purchases"));
-        const ordersSnap    = await getDocs(collection(db, "orders"));
+        const productsSnap      = await getDocs(collection(db, "products"));
+        const purchasesSnap     = await getDocs(collection(db, "purchases"));
+        const ordersSnap        = await getDocs(collection(db, "orders"));
+        const otherExpensesSnap = await getDocs(collection(db, "otherExpenses"));
 
-        const products  = productsSnap.docs.map((d) => ({ id: d.id, ...d.data() }));
-        const purchases = purchasesSnap.docs.map((d) => ({ id: d.id, ...d.data() }));
-        const orders    = ordersSnap.docs.map((d) => ({ id: d.id, ...d.data() }));
+        const products      = productsSnap.docs.map((d) => ({ id: d.id, ...d.data() }));
+        const purchases     = purchasesSnap.docs.map((d) => ({ id: d.id, ...d.data() }));
+        const orders        = ordersSnap.docs.map((d) => ({ id: d.id, ...d.data() }));
+        const otherExpenses = otherExpensesSnap.docs.map((d) => ({ id: d.id, ...d.data() }));
 
         const lowStock = products.filter((p) => (p.quantity || 0) <= (p.minStock || 5));
 
         // Financial calculations
-        // إجمالي المصروفات = إجمالي سعر شراء المنتجات الموجودة بالمخزون (سعر الصين × الكمية)
-        const totalExpenses = products.reduce(
+        // إجمالي المصروفات = تكلفة المخزون (سعر الصين × الكمية) + المصروفات الأخرى
+        const inventoryCost = products.reduce(
           (sum, p) => sum + (p.purchasePrice || 0) * (p.quantity || 0), 0
         );
+        const otherExpensesTotal = otherExpenses.reduce(
+          (sum, e) => sum + (e.amount || 0), 0
+        );
+        const totalExpenses = inventoryCost + otherExpensesTotal;
 
         // إجمالي الإيرادات = مجموع سعر البيع (المهندسين) للطلبات الموافق عليها
         const completedOrders = orders.filter((o) => o.status === "completed" || o.status === "approved");

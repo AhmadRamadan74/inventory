@@ -16,6 +16,7 @@ import {
   HiOutlineUserGroup,
   HiOutlineSun,
   HiOutlineMoon,
+  HiOutlineReceiptTax,
 } from "react-icons/hi";
 import { HiOutlineArchiveBox } from "react-icons/hi2";
 
@@ -99,13 +100,14 @@ export default function Sidebar({ isOpen, onClose }) {
   };
 
   const adminLinks = [
-    { to: "/dashboard", icon: <HiOutlineHome size={20} />,          label: "لوحة التحكم" },
-    { to: "/products",  icon: <HiOutlineCube size={20} />,           label: "المنتجات" },
-    { to: "/purchases", icon: <HiOutlineShoppingCart size={20} />,   label: "المشتريات" },
-    { to: "/inventory", icon: <HiOutlineArchiveBox size={20} />,     label: "المخزون" },
-    { to: "/orders",    icon: <HiOutlineClipboardList size={20} />,  label: "الطلبات" },
-    { to: "/receipts",  icon: <HiOutlineDocumentText size={20} />,   label: "الفواتير" },
-    { to: "/users",     icon: <HiOutlineUserGroup size={20} />,      label: "المستخدمين" },
+    { to: "/dashboard",     icon: <HiOutlineHome size={20} />,          label: "لوحة التحكم" },
+    { to: "/products",      icon: <HiOutlineCube size={20} />,           label: "المنتجات" },
+    { to: "/purchases",     icon: <HiOutlineShoppingCart size={20} />,   label: "المشتريات" },
+    { to: "/inventory",     icon: <HiOutlineArchiveBox size={20} />,     label: "المخزون" },
+    { to: "/orders",        icon: <HiOutlineClipboardList size={20} />,  label: "الطلبات" },
+    { to: "/receipts",      icon: <HiOutlineDocumentText size={20} />,   label: "الفواتير" },
+    { to: "/other-expenses",icon: <HiOutlineReceiptTax size={20} />,     label: "مصروفات أخرى" },
+    { to: "/users",         icon: <HiOutlineUserGroup size={20} />,      label: "المستخدمين" },
   ];
 
   const engineerLinks = [

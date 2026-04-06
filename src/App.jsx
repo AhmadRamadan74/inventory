@@ -17,6 +17,7 @@ import Cart from './pages/Cart';
 import MyOrders from './pages/MyOrders';
 import Receipts from './pages/Receipts';
 import Users from './pages/Users';
+import OtherExpenses from './pages/OtherExpenses';
 
 // Components
 import Layout from './components/Layout';
@@ -120,7 +121,8 @@ function App() {
                 <Route path="/purchases" element={<ProtectedRoute adminOnly><Purchases /></ProtectedRoute>} />
                 <Route path="/orders"    element={<ProtectedRoute adminOnly><Orders /></ProtectedRoute>} />
                 <Route path="/receipts"  element={<ProtectedRoute adminOnly><Receipts /></ProtectedRoute>} />
-                <Route path="/users"     element={<ProtectedRoute adminOnly><Users /></ProtectedRoute>} />
+                <Route path="/users"          element={<ProtectedRoute adminOnly><Users /></ProtectedRoute>} />
+                <Route path="/other-expenses" element={<ProtectedRoute adminOnly><OtherExpenses /></ProtectedRoute>} />
 
                 {/* Engineer Routes */}
                 <Route path="/categories" element={<Categories />} />
