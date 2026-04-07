@@ -16,6 +16,7 @@ import {
   HiOutlineSearch,
   HiOutlineCube,
   HiOutlineX,
+  HiOutlinePrinter,
 } from "react-icons/hi";
 
 const CATEGORIES = [
@@ -184,6 +185,104 @@ export default function Products() {
     return matchesSearch && matchesCategory;
   });
 
+  const handlePrintProducts = () => {
+    const printWindow = window.open("", "_blank");
+
+    if (!printWindow) {
+      toast.error("تعذر فتح نافذة الطباعة");
+      return;
+    }
+
+    const rows = filteredProducts
+      .map((product, index) => {
+        const category = getCategoryMeta(product.category);
+        const totalValue =
+          (Number(product.quantity) || 0) * (Number(product.purchasePrice) || 0);
+
+        return `
+          <tr>
+            <td>${index + 1}</td>
+            <td>${product.name || "-"}</td>
+            <td>${category.name}</td>
+            <td>${product.quantity || 0}</td>
+            <td>${Number(product.purchasePrice || 0).toFixed(2)} ر.س</td>
+            <td>${totalValue.toFixed(2)} ر.س</td>
+            <td>${
+              (product.quantity || 0) <= (product.minStock || 5)
+                ? "منخفض"
+                : "متوفر"
+            }</td>
+          </tr>
+        `;
+      })
+      .join("");
+
+    printWindow.document.write(`
+      <html dir="rtl">
+        <head>
+          <meta charset="UTF-8" />
+          <title>طباعة المنتجات</title>
+          <style>
+            body {
+              font-family: Arial, sans-serif;
+              direction: rtl;
+              padding: 24px;
+              color: #222;
+            }
+            h1 {
+              margin: 0 0 8px;
+            }
+            p {
+              margin: 0 0 20px;
+              color: #666;
+            }
+            table {
+              width: 100%;
+              border-collapse: collapse;
+            }
+            th, td {
+              border: 1px solid #ccc;
+              padding: 10px;
+              text-align: right;
+              font-size: 14px;
+            }
+            th {
+              background: #f3f3f3;
+            }
+          </style>
+        </head>
+        <body>
+          <h1>قائمة المنتجات</h1>
+          <p>عدد المنتجات المطبوعة: ${filteredProducts.length}</p>
+          <table>
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>اسم المنتج</th>
+                <th>الفئة</th>
+                <th>الكمية</th>
+                <th>سعر الشراء</th>
+                <th>إجمالي القيمة</th>
+                <th>الحالة</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${rows}
+            </tbody>
+          </table>
+          <script>
+            window.onload = function () {
+              window.print();
+              window.close();
+            };
+          </script>
+        </body>
+      </html>
+    `);
+
+    printWindow.document.close();
+  };
+
   if (loading) {
     return (
       <div className="flex flex-col gap-4">
@@ -200,18 +299,30 @@ export default function Products() {
           <h1 className="text-2xl font-bold text-white">إدارة المنتجات</h1>
           <p className="text-sm text-slate-400">{products.length} منتج في المخزون</p>
         </div>
-        <button
-          onClick={() => {
-            setEditProduct(null);
-            resetForm();
-            setShowModal(true);
-          }}
-          className="btn-primary justify-center"
-          id="add-product-btn"
-        >
-          <HiOutlinePlus size={18} />
-          إضافة منتج
-        </button>
+
+        <div className="flex flex-col gap-2 sm:flex-row">
+          <button
+            onClick={handlePrintProducts}
+            className="btn-secondary justify-center"
+            type="button"
+          >
+            <HiOutlinePrinter size={18} />
+            طباعة المنتجات
+          </button>
+
+          <button
+            onClick={() => {
+              setEditProduct(null);
+              resetForm();
+              setShowModal(true);
+            }}
+            className="btn-primary justify-center"
+            id="add-product-btn"
+          >
+            <HiOutlinePlus size={18} />
+            إضافة منتج
+          </button>
+        </div>
       </div>
 
       <div className="surface-panel flex flex-col gap-3 lg:flex-row">
